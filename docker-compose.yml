@@ -1,0 +1,33 @@
+version: "3.3"
+
+networks:
+       backend:
+       
+volumes:
+      sqlvolume:
+    
+services:
+      sql:
+        image: "microsoft/mssql-server-linux:2017-latest"
+        container_name: "container_sql"
+        environment:
+            SA_PASSWORD: "yourStrong(!)Password"
+            ACCEPT_EULA: "Y"
+        networks: 
+            - backend
+        volumes:
+          - sqlvolume:/var/opt/mssql
+        ports:
+            - "1433:1433"
+            
+      api:
+        build:
+         context: .
+         dockerfile: Dockerfile
+        ports:
+            - "4000:80" 
+        depends_on:
+            - sql 
+        container_name: "container_api"
+        networks: 
+            - backend
